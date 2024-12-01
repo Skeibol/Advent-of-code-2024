@@ -3,7 +3,7 @@
 
 int main()
 {
-
+    clock_t tStart = clock();
     std::vector<int> leftCol = {};
     std::vector<int> rightCol = {};
 
@@ -16,6 +16,6 @@ int main()
     }
 
     std::cout << res << std::endl;
-
+    printf("Time taken: %.4fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
     return 0;
 }
