@@ -11,22 +11,30 @@ int main()
     int foundNumbers = 0;
     int left = 0;
     int right = 0;
+    int j = 0;
     for (size_t i = 0; i < leftCol.size(); i++)
     {
         left = leftCol.at(i);
-        for (size_t j = 0; j < rightCol.size(); j++)
+
+        right = rightCol.at(j);
+        while (left >= right)
         {
-            right = rightCol.at(j);
-            if (right > left)
-            {
-                break;
-            }
             if (left == right)
             {
-                foundNumbers++;
+                foundNumbers += 1;
             }
-
+            j++;
+            if (j < leftCol.size())
+            {
+                right = rightCol.at(j);
+            }
+            else
+            {
+                break;
+               
+            }
         }
+      
         similarityScores += left * foundNumbers;
         foundNumbers = 0;
     }
