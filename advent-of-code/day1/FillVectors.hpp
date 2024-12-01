@@ -9,8 +9,6 @@
 void fillVectors(std::vector<int> &leftCol, std::vector<int> &rightCol)
 {
     std::ifstream file("input.txt");
-    std::string line;
-    std::stringstream contents;
 
     if (file.is_open())
     {
