@@ -17,6 +17,19 @@ try:
     f = open(f"./{directory_name}/{directory_name}_2.cpp", "x")
     f.write(r"int main(){return 0;}")
     f.close()
+    f = open(f"./{directory_name}/readme.md", "x")
+    f.write(
+        f"# [Day {day}](https://adventofcode.com/2024/day/{day})\n"
+        f"### Usage\n"
+        f"```\n"
+        f"foo@bar:~$ make\n"
+        f"```\n"
+        f"### Output\n"
+        f"```\n"
+        f"```"
+    )
+
+    f.close()
     f = open(f"./{directory_name}/Makefile", "x")
     f.write(
         f"""all: {directory_name} {directory_name}_2 run
