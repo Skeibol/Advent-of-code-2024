@@ -5,4 +5,6 @@ foo@bar:~$ make
 ```
 ### Output
 ```
+242
+311
 ```
