@@ -45,16 +45,14 @@ int main()
                     }
                     else
                     {
-                        
+
                         difference = currentChar - prevChar;
                         if (difference > 0 && difference <= 3 && !(prevDifference < 0))
                         {
-                     
                             continue;
                         }
                         else if (difference < 0 && difference >= -3 && !(prevDifference > 0))
                         {
-
                             continue;
                         }
                         else
@@ -68,14 +66,13 @@ int main()
 
             if (isValid)
             {
-                std::cout << "valid";
-                cnt+=1;
+
+                cnt += 1;
             }
             difference = 0;
             currentChar = 0;
-            std::cout << "\n";
         }
-        std::cout << cnt;
+        //std::cout << cnt;
         file.close();
     }
     return 0;
