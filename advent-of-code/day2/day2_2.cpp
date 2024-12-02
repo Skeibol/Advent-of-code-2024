@@ -33,25 +33,11 @@ bool checkReportSafetyWithDampener(std::vector<int> &inputLine)
             {
                 continue;
             }
-            else
+            difference = currentChar - prevChar;
+            if (abs(difference) > 3 || difference == 0 || prevDifference * difference < 0)
             {
-
-                difference = currentChar - prevChar;
-                if (difference > 0 && difference <= 3 && !(prevDifference < 0))
-                {
-
-                    continue;
-                }
-                else if (difference < 0 && difference >= -3 && !(prevDifference > 0))
-                {
-
-                    continue;
-                }
-                else
-                {
-                    isValid = false;
-                    break;
-                }
+                isValid = false;
+                break;
             }
         }
         if (isValid)
@@ -68,10 +54,8 @@ bool checkReportSafety(std::vector<int> &inputLine)
     int prevChar = 0;
     int difference = 0;
     int prevDifference = 0;
-    bool isValid = true;
     for (int num : inputLine)
     {
-
         prevChar = currentChar;
         currentChar = num;
         if (prevChar == 0)
@@ -82,15 +66,7 @@ bool checkReportSafety(std::vector<int> &inputLine)
         prevDifference = difference;
         difference = currentChar - prevChar;
 
-        if (prevDifference >= 0 && difference > 0 && difference <= 3)
-        {
-            continue;
-        }
-        else if (prevDifference <= 0 && difference < 0 && difference >= -3)
-        {
-            continue;
-        }
-        else
+        if (abs(difference) > 3 || difference == 0 || prevDifference * difference < 0)
         {
             return false;
         }
