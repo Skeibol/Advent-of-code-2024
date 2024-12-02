@@ -43,17 +43,11 @@ int main()
                     prevDifference = difference;
                     difference = currentChar - prevChar;
 
-                    if (prevDifference >= 0 && difference > 0 && difference <= 3)
+                    if (abs(difference) > 3 || difference == 0 || prevDifference * difference < 0)
                     {
-                        continue;
+                        isValid = false;
+                        break;
                     }
-                    if (prevDifference <= 0 && difference < 0 && difference >= -3)
-                    {
-                        continue;
-                    }
-
-                    isValid = false;
-                    break;
                 }
             }
 
