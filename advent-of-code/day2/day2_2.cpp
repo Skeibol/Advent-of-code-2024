@@ -12,7 +12,7 @@ bool checkReportSafetyWithDampener(std::vector<int> &inputLine)
     int difference = 0;
     int prevDifference = 0;
     bool isValid = true;
-    for (size_t indexToIgnore = 0; indexToIgnore < inputLine.size(); indexToIgnore++)
+    for (size_t indexToIgnore = 0; indexToIgnore < inputLine.size(); indexToIgnore++) // Ignore one index
     {
         difference = 0;
         prevDifference = 0;
@@ -26,15 +26,15 @@ bool checkReportSafetyWithDampener(std::vector<int> &inputLine)
             {
                 continue;
             }
-            prevChar = currentChar;
-            currentChar = inputLine.at(i);
+            prevChar = currentChar;        // Set current char as previous
+            currentChar = inputLine.at(i); // Get next character
             prevDifference = difference;
-            if (prevChar == 0)
+            if (prevChar == 0)             // First input is always accepted (no zeros in set)
             {
                 continue;
             }
             difference = currentChar - prevChar;
-            if (abs(difference) > 3 || difference == 0 || prevDifference * difference < 0)
+            if (abs(difference) > 3 || difference == 0 || prevDifference * difference < 0) // If difference is more than 3, zero, or sign of difference changed
             {
                 isValid = false;
                 break;
@@ -66,7 +66,7 @@ bool checkReportSafety(std::vector<int> &inputLine)
         prevDifference = difference;
         difference = currentChar - prevChar;
 
-        if (abs(difference) > 3 || difference == 0 || prevDifference * difference < 0)
+        if (abs(difference) > 3 || difference == 0 || prevDifference * difference < 0) // If difference is more than 3, zero, or sign of difference changed
         {
             return false;
         }
