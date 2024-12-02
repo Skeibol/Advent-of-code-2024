@@ -1,3 +1,4 @@
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -62,44 +63,40 @@ bool checkReportSafety(std::vector<int> &inputLine)
 }
 int main()
 {
+    auto begin = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<int>> data;
 
     std::ifstream file("input.txt");
     std::vector<int> lineData;
     std::string line;
-
+    std::stringstream lineStream;
     int cnt = 0;
+    int value;
     if (file.is_open())
     {
 
         while (std::getline(file, line))
         {
             lineData = {};
-            std::stringstream lineStream(line);
 
-            int value;
-            // Read an integer at a time from the line
+            value = 0;
+            lineStream.clear();
+            lineStream.str(std::move(line));
+
             while (lineStream >> value)
             {
-                // Add the integers from a line to a 1D array (vector)
                 lineData.push_back(value);
             }
-            // When all the integers have been read, add the 1D array
-            // into a 2D array (as one line in the 2D array)
-            data.push_back(lineData);
-            for (auto token : lineData)
-            {
-                std::cout << token << " ";
-            }
-            if(checkReportSafety(lineData)){
-                cnt+=1;
-            }
-            std::cout << "   " << checkReportSafety(lineData) << "<-";
 
-            std::cout << "\n";
+            if (checkReportSafety(lineData))
+            {
+                cnt += 1;
+            }
         }
-        std::cout << cnt << "\n";
         file.close();
     }
+    std::cout << cnt << "\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1000000000.0f << "sec" << std::endl;
     return 0;
 }
