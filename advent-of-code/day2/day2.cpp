@@ -42,20 +42,18 @@ int main()
 
                     prevDifference = difference;
                     difference = currentChar - prevChar;
-                    
+
                     if (prevDifference >= 0 && difference > 0 && difference <= 3)
                     {
                         continue;
                     }
-                    else if (prevDifference <= 0 && difference < 0 && difference >= -3)
+                    if (prevDifference <= 0 && difference < 0 && difference >= -3)
                     {
                         continue;
                     }
-                    else
-                    {
-                        isValid = false;
-                        break;
-                    }
+
+                    isValid = false;
+                    break;
                 }
             }
 
