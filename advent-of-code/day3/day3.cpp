@@ -1,5 +1,7 @@
+#include <chrono>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 class DeterministicStateAutomata
@@ -23,12 +25,11 @@ class DeterministicStateAutomata
                     {
                         handleFinalState(state);
                         state = startState;
-                        _buffer.clear();
                     }
                 }
             }
             file.close();
-            std::cout << result;
+            std::cout << result << '\n';
         }
     }
 
@@ -105,8 +106,14 @@ class DeterministicStateAutomata
             {
                 if (transitionTable[i][1] == currentState)
                 {
-
-                    _buffer.push_back(input);
+                    if (isdigit(input))
+                    {
+                        _buffer.push_back(input);
+                    }
+                    if (input == ',')
+                    {
+                        _buffer.push_back(' ');
+                    }
 
                     return transitionTable[i][2];
                 }
@@ -119,21 +126,16 @@ class DeterministicStateAutomata
     {
         if (state == '7' && canDo) // If its in mul final state, and it can do, do the multiplying
         {
-            int res = 0;
+            int res = 1;
+
             std::string num;
-            for (char token : _buffer)
+            std::stringstream buf(_buffer);
+            while (buf >> num)
             {
-                if (isdigit(token))
-                {
-                    num.push_back(token);
-                }
-                else if (token == ',')
-                {
-                    res = std::stoi(num);
-                    num.clear();
-                }
+                res = res * std::stoi(num);
             }
-            result += res * std::stoi(num);
+            result += res;
+            _buffer.clear();
         }
         if (state == 'B')
         {
@@ -148,6 +150,10 @@ class DeterministicStateAutomata
 
 int main()
 {
+    auto begin = std::chrono::high_resolution_clock::now();
+
     DeterministicStateAutomata DSA("input.txt");
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1000000000.0f << "sec" << std::endl;
     return 0;
 }
