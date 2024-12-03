@@ -36,9 +36,9 @@ class DeterministicStateAutomata
     std::string ALPHABET = "0123456789mul(,)don't";
     std::string _buffer;
     bool canDo = true;
-    char states[18] = {'1', '2', '3', '4', '5', '6', '7', // Existing states for "mul(...)"
-                       '8', '9', 'A', 'B',                // New states for "do()"
-                       'C', 'D', 'E', 'F', 'G'};          // New states for "don't()"
+    char states[18] = {'1', '2', '3', '4', '5', '6', '7', // states for "mul(...)"
+                       '8', '9', 'A', 'B',                // states for "do()"
+                       'C', 'D', 'E', 'F', 'G'};          // states for "don't()"
 
     char startState = states[0];
     char finalStates[3] = {states[6],   // End state for "mul(...)"
