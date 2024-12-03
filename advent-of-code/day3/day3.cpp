@@ -34,18 +34,18 @@ class DeterministicStateAutomata
     }
 
   private:
-    std::string ALPHABET = "0123456789mul(,)don't";
+    const std::string ALPHABET = "0123456789mul(,)don't";
     std::string _buffer;
     bool canDo = true;
-    char states[18] = {'1', '2', '3', '4', '5', '6', '7', // states for "mul(...)"
-                       '8', '9', 'A', 'B',                // states for "do()"
-                       'C', 'D', 'E', 'F', 'G'};          // states for "don't()"
+    const char states[18] = {'1', '2', '3', '4', '5', '6', '7', // states for "mul(...)"
+                             '8', '9', 'A', 'B',                // states for "do()"
+                             'C', 'D', 'E', 'F', 'G'};          // states for "don't()"
 
-    char startState = states[0];
-    char finalStates[3] = {states[6],   // End state for "mul(...)"
-                           states[10],  // End state for "do()"
-                           states[15]}; // End state for "don't()"
-    char transitionTable[40][3] = {
+    const char startState = states[0];
+    const char finalStates[3] = {states[6],   // End state for "mul(...)"
+                                 states[10],  // End state for "do()"
+                                 states[15]}; // End state for "don't()"
+    const char transitionTable[40][3] = {
         // Transitions for "mul()"
 
         {'m', states[0], states[1]},
@@ -92,7 +92,7 @@ class DeterministicStateAutomata
         {'(', states[13], states[14]},
         {')', states[14], states[15]}};
 
-    char getNextState(char input, char currentState)
+    const char getNextState(char input, char currentState)
     {
         if (ALPHABET.find(input) == std::string::npos)
         {
@@ -122,7 +122,7 @@ class DeterministicStateAutomata
 
         return startState;
     }
-    void handleFinalState(char state)
+    const void handleFinalState(char state)
     {
         if (state == '7' && canDo) // If its in mul final state, and it can do, do the multiplying
         {
