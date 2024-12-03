@@ -23,7 +23,6 @@ class DeterministicStateAutomata
                 {
                     if (state == finalState)
                     {
-                        handleFinalState(state);
                         state = startState;
                     }
                 }
@@ -36,16 +35,17 @@ class DeterministicStateAutomata
   private:
     const std::string ALPHABET = "0123456789mul(,)don't";
     std::string _buffer;
+    int firstNumber;
     bool canDo = true;
-    const char states[18] = {'1', '2', '3', '4', '5', '6', '7', // states for "mul(...)"
-                             '8', '9', 'A', 'B',                // states for "do()"
-                             'C', 'D', 'E', 'F', 'G'};          // states for "don't()"
+    const char states[16] = {'1', '2', '3', '4', '5', '6', '7', // states for "mul(...)"
+                             '8', '9', 'A',                     // states for "do()"
+                             'C', 'D', 'E', 'F'};               // states for "don't()" - do is shared
 
     const char startState = states[0];
-    const char finalStates[3] = {states[6],   // End state for "mul(...)"
-                                 states[10],  // End state for "do()"
-                                 states[15]}; // End state for "don't()"
-    const char transitionTable[40][3] = {
+    const char finalStates[1] = {
+        states[6], // End state for all
+    };
+    const char transitionTable[35][3] = {
         // Transitions for "mul()"
 
         {'m', states[0], states[1]},
@@ -83,14 +83,14 @@ class DeterministicStateAutomata
         {'d', states[0], states[7]},
         {'o', states[7], states[8]},
         {'(', states[8], states[9]},
-        {')', states[9], states[10]},
+        {')', states[9], states[6]},
 
         // Transitions for "don't()"
-        {'n', states[8], states[11]},
-        {'\'', states[11], states[12]},
-        {'t', states[12], states[13]},
-        {'(', states[13], states[14]},
-        {')', states[14], states[15]}};
+        {'n', states[8], states[10]},
+        {'\'', states[10], states[11]},
+        {'t', states[11], states[12]},
+        {'(', states[12], states[13]},
+        {')', states[13], states[6]}};
 
     const char getNextState(char input, char currentState)
     {
@@ -106,45 +106,40 @@ class DeterministicStateAutomata
             {
                 if (transitionTable[i][1] == currentState)
                 {
+                    if (transitionTable[i][2] == states[6] && currentState == states[9]) // Transition ifs, implement transition functions
+                    {
+                        canDo = true;
+                    }
+                    else if (transitionTable[i][2] == states[6] && currentState == states[13]) // Transition ifs, implement transition functions
+                    {
+                        canDo = false;
+                    }
+                    else if (transitionTable[i][2] == states[6] && currentState == states[5]) // Transition ifs, implement transition functions
+                    {
+                        if (canDo)
+                        {
+
+                            result += std::stoi(_buffer) * firstNumber;
+                        }
+                        _buffer.clear();
+                    }
+                    else if (transitionTable[i][2] == states[5] && currentState == states[4]) // Transition ifs, implement transition functions
+                    {
+                        firstNumber = std::stoi(_buffer);
+                        _buffer.clear();
+                    }
+
                     if (isdigit(input))
                     {
                         _buffer.push_back(input);
                     }
-                    if (input == ',')
-                    {
-                        _buffer.push_back(' ');
-                    }
 
-                    return transitionTable[i][2];
+                    return transitionTable[i][2]; // Return next state after table lookup
                 }
             }
         }
 
         return startState;
-    }
-    const void handleFinalState(char state)
-    {
-        if (state == '7' && canDo) // If its in mul final state, and it can do, do the multiplying
-        {
-            int res = 1;
-
-            std::string num;
-            std::stringstream buf(_buffer);
-            while (buf >> num)
-            {
-                res = res * std::stoi(num);
-            }
-            result += res;
-            _buffer.clear();
-        }
-        if (state == 'B')
-        {
-            canDo = true;
-        }
-        if (state == 'G')
-        {
-            canDo = false;
-        }
     }
 };
 
