@@ -3,9 +3,6 @@
 #include <list>
 #include <string>
 #include <vector>
-void checkInputMatrix(int (&arr)[140][140])
-{
-}
 int main()
 {
     int kernels[4][3][3] = {
@@ -42,8 +39,7 @@ int main()
     std::ifstream file("input.txt");
 
     int inputMatrix[140][140] = {};
-    int character;
-    int j = 0;
+    int lineNumber = 0;
     if (file.is_open())
     {
         while (std::getline(file, line))
@@ -51,39 +47,37 @@ int main()
 
             for (size_t charPos = 0; charPos < line.length(); charPos++)
             {
-                character = line.at(charPos);
-                if (character == 65 || character == 83 || character == 77) // 77 - M , 65 - A, 83 - S
-                {
-                    inputMatrix[charPos][j] = line.at(charPos);
-                }
+
+                inputMatrix[lineNumber][charPos] = line.at(charPos);  // Create 2D array of characters
             }
 
-            j += 1;
+            lineNumber += 1;
         }
 
         file.close();
     }
+
     bool found = true;
     int result = 0;
+
     for (size_t row = 1; row < sizeof(inputMatrix) / sizeof(inputMatrix[0]) - 1; row++)
     {
         for (size_t col = 1; col < sizeof(inputMatrix[0]) / sizeof(inputMatrix[0][0]) - 1; col++)
         {
-            if (inputMatrix[col][row] == 'A')
+            if (inputMatrix[row][col] == 'A') // If A is found, apply center of matrix to nearby characters to try match
             {
 
-                for (size_t kernelIndex = 0; kernelIndex < sizeof(kernels) / sizeof(kernels[0]); kernelIndex++)
+                for (size_t kernelIndex = 0; kernelIndex < sizeof(kernels) / sizeof(kernels[0]); kernelIndex++) // Go through all 4 matrices
                 {
                     found = true;
 
-                    for (size_t j = 0; j < sizeof(kernels[0]) / sizeof(kernels[0][0]); j++)
+                    for (size_t i = 0; i < sizeof(kernels[0]) / sizeof(kernels[0][0]); i++) // Matrix Y
                     {
-                        for (size_t k = 0; k < sizeof(kernels[0][0]) / sizeof(kernels[0][0][0]); k++)
+                        for (size_t j = 0; j < sizeof(kernels[0][0]) / sizeof(kernels[0][0][0]); j++) // Matrix X
                         {
-                            if (kernels[kernelIndex][j][k] != 0)
+                            if (kernels[kernelIndex][i][j] != 0) // Look only for diagonals (not zeros)
                             {
-
-                                if (inputMatrix[col - 1 + k][row - 1 + j] - kernels[kernelIndex][j][k] != 0)
+                                if (inputMatrix[row - 1 + i][col - 1 + j] - kernels[kernelIndex][i][j] != 0) // If elementwise kernel diff is not zero (char1 - char2 = 0) <=> char1 = char2
                                 {
                                     found = false;
                                 }
@@ -93,13 +87,12 @@ int main()
                     if (found)
                     {
                         result += 1;
-                        break;
+                        break; // Only one matrix needs to match
                     }
                 }
             }
         }
     }
     std::cout << result << "\n";
-
     return 0;
 }
