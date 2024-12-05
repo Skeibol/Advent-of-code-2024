@@ -1,7 +1,7 @@
 import numpy as np
 import re
 from input import INPUTSTR
-
+from time import perf_counter,sleep
 
 
 
@@ -29,22 +29,22 @@ def checkMatrix(input, horizontal=True, vertical=True):
                 diagBuffer[8 + i] = inputList[j, i]
                 diagBuffer[8 + 7 - i] = inputList[j, i]
 
-    for x in range(4, 41, 5):
-        try:
-            buffer.insert(x, " ")
-            vertBuffer.insert(x, " ")
-            diagBuffer.insert(x, " ")
-        except:
-            pass
+    founds = 0
     checkString = "".join([str(c) for c in buffer])
     checkString += "".join([str(c) for c in vertBuffer])
     checkString += "".join([str(c) for c in diagBuffer])
+    for i in range(0, len(checkString), 4):
+        chunk = checkString[i:i+4]  # Extract 4 characters
+        if(chunk == "XMAS"):
+            founds += 1
 
 
-    founds = re.findall("XMAS", checkString)
-    return len(founds)
+  
+    return founds
 
 
+
+start = perf_counter()
 result = np.array([[c for c in line] for line in INPUTSTR.splitlines()])
 counts = 0
 horizontal = True
@@ -66,3 +66,5 @@ for i in range(0, len(result) - 3):
         counts += res
 print(counts)
 
+end = perf_counter() - start
+print(end)

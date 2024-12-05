@@ -1,3 +1,4 @@
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <list>
@@ -5,6 +6,8 @@
 #include <vector>
 int main()
 {
+    auto begin = std::chrono::high_resolution_clock::now();
+
     int kernels[4][3][3] = {
         {
 
@@ -48,7 +51,7 @@ int main()
             for (size_t charPos = 0; charPos < line.length(); charPos++)
             {
 
-                inputMatrix[lineNumber][charPos] = line.at(charPos);  // Create 2D array of characters
+                inputMatrix[lineNumber][charPos] = line.at(charPos); // Create 2D array of characters
             }
 
             lineNumber += 1;
@@ -94,5 +97,7 @@ int main()
         }
     }
     std::cout << result << "\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1000000000.0f << "sec" << std::endl;
     return 0;
 }
