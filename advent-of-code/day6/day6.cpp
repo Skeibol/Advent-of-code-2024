@@ -86,7 +86,8 @@ bool checkBounds(std::vector<int> pos, std::vector<std::vector<int>> &field)
 int runSimulation(Guard guard, std::vector<std::vector<int>> &field)
 {
     std::vector<int> nextPosition;
-    std::vector<std::vector<int>> previousMoves;
+    std::vector<std::pair<std::vector<int>, std::vector<int>>> illegalPositions;
+    bool changedDirection;
 
     while (true)
     {
@@ -101,33 +102,21 @@ int runSimulation(Guard guard, std::vector<std::vector<int>> &field)
         {
             guard.direction = getNextDirection(directions);
             nextPosition = getNextPosition(guard.position, guard.direction);
+            changedDirection = true;
         }
-
-        guard.position = nextPosition;
-        int cnt;
-        if (std::find(previousMoves.begin(), previousMoves.end(), guard.position) != previousMoves.end())
+        if (changedDirection)
         {
+            auto it = std::find(illegalPositions.begin(), illegalPositions.end(), std::make_pair(guard.direction, guard.position));
 
-            cnt++;
-            if (cnt > previousMoves.size())
+            if (it != illegalPositions.end())
             {
-                std::cout << "Loop break" << "\n";
-                directions.currentDirection = 3;
-                guard.direction = directions.dir[directions.currentDirection];
-
                 return 1;
+                // std::cout << "Pair found in illegalPositions!" << std::endl;
             }
+            illegalPositions.emplace_back(guard.direction, guard.position);
         }
-        else
-        {
-            cnt = 0;
-
-            previousMoves.push_back(guard.position);
-        }
+        guard.position = nextPosition;
     }
-
-    directions.currentDirection = 3;
-    guard.direction = directions.dir[directions.currentDirection];
 }
 
 std::vector<std::vector<int>> generateMovesToCheck(Guard guard, std::vector<std::vector<int>> &field)
@@ -136,7 +125,6 @@ std::vector<std::vector<int>> generateMovesToCheck(Guard guard, std::vector<std:
     std::vector<int> nextPosition;
     std::vector<std::vector<int>> previousMoves;
 
-    bool inLoop = false;
     while (true)
     {
 
@@ -253,12 +241,12 @@ bool setObstacle(std::vector<int> &currPos, std::vector<int> &prevPos, std::vect
 
 int main()
 {
-    int cnt = 0;
+    int loopCount = 0;
     Guard guard;
 
     std::vector<std::vector<int>> field;
 
-    std::vector<int> prevObstaclePosition = {};
+    std::vector<int> prevObstaclePosition = {2, 2}; // random empty space
     std::vector<int> currentObstaclePosition;
 
     field = generateField(guard);
@@ -269,16 +257,22 @@ int main()
 
     for (int i = 1; i < positionsToCheck.size(); i++)
     {
-        resetGuard(guard);
+        guard.direction = directions.dir[3];
+        directions.currentDirection = 3;
+        guard.position = guard.initialPosition;
+        //resetGuard(guard);
         currentObstaclePosition = {positionsToCheck[i][0], positionsToCheck[i][1]};
-        if (setObstacle(currentObstaclePosition, prevObstaclePosition, field))
+        setObstacle(currentObstaclePosition, prevObstaclePosition, field);
+        prevObstaclePosition = currentObstaclePosition;
+
+        loopCount += runSimulation(guard, field);
+        if (i % 200 == 0)
         {
-            prevObstaclePosition = currentObstaclePosition;
+
+            std::cout << i << " out of " << positionsToCheck.size() << " complete. Loops = " << loopCount << '\n';
         }
-        cnt += runSimulation(guard, field);
     }
 
-    std::cout << "all out of " << positionsToCheck.size() << " complete. Count = " << cnt << '\n';
-    std::cout << "count " << cnt << '\n';
+    std::cout << "count " << loopCount << '\n';
     return 0;
 }
