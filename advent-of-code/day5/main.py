@@ -12,20 +12,27 @@ def fillDictionary(line):
 
 def checkLine(_line):
 
-    for idx in range(0, len(_line)):
-        if idx == len(_line) - 1:
-            continue
-        if _line[idx] not in numbers_dict.keys():
-            continue
-        for numToCheck in _line[idx + 1 :]:
-            if numbers_dict[_line[idx]].count(numToCheck) > 0:
-                return False, idx, _line.index(numToCheck)
+  
+
+  
+    for idx, numToCheck in enumerate(_line):
+        if numbers_dict[_line[len(line) // 2]].count(numToCheck) > 0:
+            return False, idx, _line.index(numToCheck)
 
     return True, 0, 0
 
 
 start = perf_counter()
-numbers_dict = {}
+numbers_dict = {
+    2: [2, 34],
+    2: { start : "c", 
+        "a" : 23, 
+        "c" :[2, "a"]
+        },
+    "a": [2, 34],
+}
+
+
 numbers_list = []
 parsedOrders = False
 cnt = 0
@@ -41,19 +48,21 @@ for line in INPUTSTR.splitlines():
         numbers_list.append([i for i in line.split(",")[::-1]])
 
 for line in numbers_list:
+    swaps = 0
     isValid = True
     isLineCorrect, startIdx, problemIdx = checkLine(line)
 
     if isLineCorrect:
         cnt2 += int(line[len(line) // 2])
     while not isLineCorrect:
+        swaps+=1
         buff = line[startIdx]
         line[startIdx] = line[problemIdx]
         line[problemIdx] = buff
         isLineCorrect, startIdx, problemIdx = checkLine(line)
-        cnt2
+      
         isValid = False
-
+    print(swaps)
     if not isValid:
         cnt += int(line[len(line) // 2])
 
