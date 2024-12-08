@@ -1,8 +1,8 @@
 from functools import reduce
 from operator import mul
 import itertools
-
-
+from time import perf_counter, sleep
+start = perf_counter()
 f = open("./advent-of-code/day7/input.txt", "r")
 
 results = []
@@ -55,3 +55,5 @@ for result, num in zip(results, numbers):
 
 
 print(solution)
+end = perf_counter() - start
+print(f"Time elapsed : {end}")
