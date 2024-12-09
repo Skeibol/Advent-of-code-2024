@@ -6,12 +6,6 @@ class File:
     def setDiskLocations(self, start, end):
         for i in range(start, end):
             self.locations.append(i)
-            
-class BlockFile:
-    def __init__(self,ID,start,size):
-        self.ID = ID
-        self.start = start
-        self.size = size
 
 
 class Disk:
