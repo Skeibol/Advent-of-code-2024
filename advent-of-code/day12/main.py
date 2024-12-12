@@ -16,13 +16,12 @@ class Garden:
         for location in self.locations:
             Y = location[0]
             X = location[1]
- 
-            crossLocations = [[Y + 1, X],[Y - 1, X],[Y, X + 1],[Y, X - 1]]
-            for crossY,crossX in crossLocations:
-                if[crossY,crossX] in self.locations:
-                    self.fences-= 1
 
-    
+            crossLocations = [[Y + 1, X], [Y - 1, X], [Y, X + 1], [Y, X - 1]]
+            for crossY, crossX in crossLocations:
+                if [crossY, crossX] in self.locations:
+                    self.fences -= 1
+
         return self.fences * len(self.locations)
 
     def calculateCorners(self):
@@ -31,13 +30,11 @@ class Garden:
             Y = location[0]
             diagonals = [[Y + 1, X + 1], [Y - 1, X + 1], [Y - 1, X - 1], [Y + 1, X - 1]]
             for diagY, diagX in diagonals:
-                if [diagY, diagX] not in self.locations:
-                    if [diagY, X] in self.locations and [Y, diagX] in self.locations:
-                        self.corners += 1
-                    if [diagY, X] not in self.locations and [Y, diagX] not in self.locations:
-                        self.corners += 1
-                else:
-                    if [diagY, X] not in self.locations and [Y, diagX] not in self.locations:
+                if [diagY, X] not in self.locations and [Y, diagX] not in self.locations:
+                    self.corners += 1
+
+                if [diagY, X] in self.locations and [Y, diagX] in self.locations:
+                    if [diagY, diagX] not in self.locations:
                         self.corners += 1
 
         return self.corners * len(self.locations)
