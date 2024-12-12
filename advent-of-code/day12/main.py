@@ -16,90 +16,30 @@ class Garden:
         for location in self.locations:
             Y = location[0]
             X = location[1]
-            locationFences = 4
-            if [Y + 1, X] in self.locations:
-                locationFences -= 1
+ 
+            crossLocations = [[Y + 1, X],[Y - 1, X],[Y, X + 1],[Y, X - 1]]
+            for crossY,crossX in crossLocations:
+                if[crossY,crossX] in self.locations:
+                    self.fences-= 1
 
-            if [Y - 1, X] in self.locations:
-                locationFences -= 1
-
-            if [Y, X + 1] in self.locations:
-                locationFences -= 1
-
-            if [Y, X - 1] in self.locations:
-                locationFences -= 1
-
-            self.fences -= locationFences
-
+    
         return self.fences * len(self.locations)
 
     def calculateCorners(self):
         for location in self.locations:
             X = location[1]
             Y = location[0]
-            diagonal = [Y + 1, X + 1]
-            if diagonal not in self.locations:
-                if [Y + 1, X] in self.locations and [Y, X + 1] in self.locations:
-                    self.corners += 1
-                if [Y + 1, X] not in self.locations and [
-                    Y,
-                    X + 1,
-                ] not in self.locations:
-                    self.corners += 1
-            else:
-                if [Y + 1, X] not in self.locations and [
-                    Y,
-                    X + 1,
-                ] not in self.locations:
-                    self.corners += 1
+            diagonals = [[Y + 1, X + 1], [Y - 1, X + 1], [Y - 1, X - 1], [Y + 1, X - 1]]
+            for diagY, diagX in diagonals:
+                if [diagY, diagX] not in self.locations:
+                    if [diagY, X] in self.locations and [Y, diagX] in self.locations:
+                        self.corners += 1
+                    if [diagY, X] not in self.locations and [Y, diagX] not in self.locations:
+                        self.corners += 1
+                else:
+                    if [diagY, X] not in self.locations and [Y, diagX] not in self.locations:
+                        self.corners += 1
 
-            diagonal = [Y - 1, X + 1]
-            if diagonal not in self.locations:
-                if [Y - 1, X] in self.locations and [Y, X + 1] in self.locations:
-                    self.corners += 1
-                if [Y - 1, X] not in self.locations and [
-                    Y,
-                    X + 1,
-                ] not in self.locations:
-                    self.corners += 1
-            else:
-                if [Y - 1, X] not in self.locations and [
-                    Y,
-                    X + 1,
-                ] not in self.locations:
-                    self.corners += 1
-
-            diagonal = [Y - 1, X - 1]
-            if diagonal not in self.locations:
-                if [Y - 1, X] in self.locations and [Y, X - 1] in self.locations:
-                    self.corners += 1
-                if [Y - 1, X] not in self.locations and [
-                    Y,
-                    X - 1,
-                ] not in self.locations:
-                    self.corners += 1
-            else:
-                if [Y - 1, X] not in self.locations and [
-                    Y,
-                    X - 1,
-                ] not in self.locations:
-                    self.corners += 1
-            diagonal = [Y + 1, X - 1]
-            if diagonal not in self.locations:
-                if [Y + 1, X] in self.locations and [Y, X - 1] in self.locations:
-                    self.corners += 1
-                if [Y + 1, X] not in self.locations and [
-                    Y,
-                    X - 1,
-                ] not in self.locations:
-                    self.corners += 1
-            else:
-                if [Y + 1, X] not in self.locations and [
-                    Y,
-                    X - 1,
-                ] not in self.locations:
-                    self.corners += 1
-        print(f"{chr(self.ID)} price = {self.corners * len(self.locations)}")
         return self.corners * len(self.locations)
 
 
@@ -153,10 +93,11 @@ for Y in range(0, len(terrainArray)):
             gardens.append(gardenObj)
 
 
-fencesTotal = 0
-cornersTotal = 0
+fencePriceTotal = 0
+cornerPriceTotal = 0
 for garden in gardens:
-    fencesTotal += garden.setFences()
-    cornersTotal += garden.calculateCorners()
+    fencePriceTotal += garden.setFences()
+    cornerPriceTotal += garden.calculateCorners()
     # print(f"{chr(garden.ID)} has {garden.corners} corners")
-print(f"Total price : {cornersTotal}")
+print(f"Total price fences : {fencePriceTotal}")
+print(f"Total price corners : {cornerPriceTotal}")
