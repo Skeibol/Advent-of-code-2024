@@ -36,7 +36,7 @@ class Machine:
         A = (prize_x*BY - prize_y*BX) / (AX*BY - AY*BX)
         B = (AX*prize_y - AY*prize_x) / (AX*BY - AY*BX)
         if A.is_integer() and B.is_integer() :
-            return A *3 + B
+            return A + B
         else:
             return 0
 
@@ -47,72 +47,24 @@ class Machine:
         targetY = self.target[1] 
         buttonApushes = 0
         buttonBpushes = 0
-        costs = []
         while targetX > 0 and targetY > 0:
-            if not self.weird:
-                if targetX % self.buttonB[0] == 0 and targetY % self.buttonB[1] == 0:
-                    targetX -= self.buttonB[0]
-                    targetY -= self.buttonB[1]
-                    buttonBpushes += 1
-                else:
-                    targetX -= self.buttonA[0]
-                    targetY -= self.buttonA[1]
-                    buttonApushes += 1
+            if targetX % self.buttonB[0] == 0 and targetY % self.buttonB[1] == 0:
+                targetX -= self.buttonB[0]
+                targetY -= self.buttonB[1]
+                buttonBpushes += 1
             else:
-                if targetX % self.buttonA[0] == 0 and targetY % self.buttonA[1] == 0:
-                    targetX -= self.buttonA[0]
-                    targetY -= self.buttonA[1]
-                    buttonApushes += 1
-                else:
-                    targetX -= self.buttonB[0]
-                    targetY -= self.buttonB[1]
-                    buttonBpushes += 1
+                targetX -= self.buttonA[0]
+                targetY -= self.buttonA[1]
+                buttonApushes += 1
+
         if targetX == 0 and targetY == 0:
             # print(
             #     f"After {buttonApushes} A pushes, and {buttonBpushes} B pushes , target at : {targetX,targetY}"
             # )
             cost = (buttonApushes * 3) + (buttonBpushes)
-            costs.append(cost)
-    
-        targetX = self.target[0] 
-        targetY = self.target[1] 
-        buttonApushes = 0
-        buttonBpushes = 0
-        while targetX > 0 and targetY > 0:
-            if not self.weird:
-                if targetX % self.buttonA[0] == 0 and targetY % self.buttonA[1] == 0:
-                    targetX -= self.buttonA[0]
-                    targetY -= self.buttonA[1]
-                    buttonApushes += 1
-                else:
-                    targetX -= self.buttonB[0]
-                    targetY -= self.buttonB[1]
-                    buttonBpushes += 1
-            else:
-                if targetX % self.buttonB[0] == 0 and targetY % self.buttonB[1] == 0:
-                    targetX -= self.buttonB[0]
-                    targetY -= self.buttonB[1]
-                    buttonBpushes += 1
-                else:
-                    targetX -= self.buttonA[0]
-                    targetY -= self.buttonA[1]
-                    buttonApushes += 1
-        if targetX == 0 and targetY == 0:
-            # print(
-            #     f"After {buttonApushes} A pushes, and {buttonBpushes} B pushes , target at : {targetX,targetY}"
-            # )
-            cost = (buttonApushes * 3) + (buttonBpushes)
-            costs.append(cost)
-        
-        if len(costs) == 0:
-            return 0
-        if len(costs) == 1:
-            return costs[0]
-        if costs[0] > costs[1]:
-            return costs[0]
+            return cost
         else:
-            return costs[1]
-        
+            return 0
 
 
 machines = []
@@ -132,9 +84,10 @@ with open("./advent-of-code/day13/input.txt", "r") as file:
 totalcost = 0
 totalcost2 = 0
 for mac in machines:
-    totalcost2 += mac.tryCalculateTarget()
-    totalcost += mac.tryReachTarget()
+    totalcost2 += mac.tryReachTarget()
+    totalcost += mac.tryCalculateTarget()
 
-print(totalcost)
+
+
 print(totalcost2)
-
+print(totalcost)

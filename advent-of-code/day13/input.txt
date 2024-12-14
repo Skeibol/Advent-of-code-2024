@@ -106,10 +106,6 @@ Button A: X+61, Y+74
 Button B: X+76, Y+23
 Prize: X=7511, Y=2884
 
-Button A: X+84, Y+33
-Button B: X+12, Y+18
-Prize: X=3372, Y=2268
-
 Button A: X+32, Y+68
 Button B: X+52, Y+19
 Prize: X=3288, Y=3522
@@ -713,10 +709,6 @@ Prize: X=5018, Y=8378
 Button A: X+18, Y+43
 Button B: X+51, Y+20
 Prize: X=434, Y=12521
-
-Button A: X+99, Y+34
-Button B: X+18, Y+27
-Prize: X=1998, Y=936
 
 Button A: X+68, Y+93
 Button B: X+83, Y+30
