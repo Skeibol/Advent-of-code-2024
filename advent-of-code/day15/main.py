@@ -1,6 +1,7 @@
 from enum import Enum
 import numpy as np
-
+import msvcrt
+import os
 
 class Vel(Enum):
     UP = [0, -1]
@@ -8,7 +9,17 @@ class Vel(Enum):
     LEFT = [-1, 0]
     RIGHT = [1, 0]
 
-
+class Colors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    
 class GameObject:
     def __init__(self, X, Y, width):
         self.X = X * width
@@ -78,7 +89,12 @@ def printField(crates, walls, robot):
         field[crate.Y, crate.X + crate.width - 2] = "["
         field[crate.Y, crate.X + crate.width - 1] = "]"
     field[robot.Y, robot.X] = "@"
-    print(field)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    for row in field:
+        for char in row:
+            print(char,end='')
+        print()
+
 
 
 FIELD_HEIGHT = 10
@@ -122,10 +138,25 @@ with open("./advent-of-code/day15/input.txt", "r") as file:  # Initializing worl
 
 
 coordinateSum = 0
-for move in moves:
-    if robot.checkMove(move.value, crates, walls):
-        robot.pushObjects(move.value, crates, walls)
+move = ''
+while move != 'q':
+    printField(crates,walls,robot)
+    move = msvcrt.getch()
+    print(f"Move : {move}")
+    if move == b'w':
+        dir = Vel.UP
+    elif move == b's':
+        dir = Vel.DOWN
+    elif move == b'a':
+        dir = Vel.LEFT
+    elif move == b'd':
+        dir = Vel.RIGHT
+    
+    if robot.checkMove(dir.value, crates, walls):
+        robot.pushObjects(dir.value, crates, walls)
+ 
         
+
 for crate in crates:
     coordinateSum += crate.getGPSCoordinate()
 
