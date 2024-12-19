@@ -1,59 +1,6 @@
 import cv2
 import numpy as np
-
-class Color:
-    NLUE = '\033[94m'
-    GREEN = '\033[92m'
-    RED = '\033[91m'
-    CYAN = '\033[96m'
-    ENDC = '\033[0m'
-
-def drawField(line):
-    
-    pr = ''
-    for char in line:
-
-        if char == '':
-            pr += f"{Color.GREEN}{char}{Color.ENDC}"
-            #print(char, end="")
-        elif char == '3':
-            pr += f"{Color.GREEN}O{Color.ENDC}"
-            #print(pr, end="")
-        elif char == '1':
-            pr += f"{Color.CYAN}#{Color.ENDC}"
-            #print(pr, end="")
-        elif char == '2':
-            pr += f"{Color.RED}X{Color.ENDC}"
-            #print(pr, end="")
-        else:
-            pr += f"{Color.CYAN}.{Color.ENDC}"
-            #print(pr, end="")
-    
-    print(pr)
-def drawField(line):
-    
-    pr = ''
-    for char in line:
-
-        if char == '':
-            pr += f"{Color.GREEN}{char}{Color.ENDC}"
-            #print(char, end="")
-        elif char == '3':
-            pr += f"{Color.GREEN}O{Color.ENDC}"
-            #print(pr, end="")
-        elif char == '1':
-            pr += f"{Color.CYAN}#{Color.ENDC}"
-            #print(pr, end="")
-        elif char == '2':
-            pr += f"{Color.RED}X{Color.ENDC}"
-            #print(pr, end="")
-        else:
-            pr += f"{Color.CYAN}.{Color.ENDC}"
-            #print(pr, end="")
-    
-    print(pr)
-    
-
+from PIL import Image, ImageFont, ImageDraw
 
 def putTextOnImage(image,text,alignLeft = True):
     image_width = image.shape[1]
@@ -62,15 +9,13 @@ def putTextOnImage(image,text,alignLeft = True):
     fontpath = "./advent-of-code/day18/terminal2.otf"     
     font = ImageFont.truetype(fontpath, 32)
 
-    # Calculate the position: center horizontally and vertically within the 50px
     if alignLeft:
         text_x = 20
     else: 
         text_x = image_width // 2 + 70
         
-    text_y = 20  # Align vertically in the 50px space
+    text_y = 20  
 
-      
     draw.text((text_x, text_y),text,(200),font=font)
     
     return np.array(image)
@@ -78,9 +23,6 @@ def putTextOnImage(image,text,alignLeft = True):
 FIELD_SIZE = 71
 SCALE = 14
 PADDING = 80
-from PIL import Image, ImageFont, ImageDraw
-
-
 
 
 images = []
@@ -116,12 +58,10 @@ with open("./advent-of-code/day18/visual.txt", "r") as file:
       
 
 
-
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-out= cv2.VideoWriter("./advent-of-code/day18/visual.avi",fourcc,24,(FIELD_SIZE*SCALE,FIELD_SIZE*SCALE+PADDING),isColor=True) 
+out= cv2.VideoWriter("./advent-of-code/day18/visual.avi",fourcc,2,(FIELD_SIZE*SCALE,FIELD_SIZE*SCALE+PADDING),isColor=True) 
 print(images[0].shape)
 for idx,image in enumerate(images):
-    #print("enum")
     image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
     B = image[:,:,0]
     G = image[:,:,1]
@@ -136,7 +76,6 @@ for idx,image in enumerate(images):
         G[G == 255] = 175
         R[R == 255] = 20
 
-    #print(f"{(FIELD_SIZE*SCALE+PADDING,FIELD_SIZE*SCALE)} , img : {image.shape}")
     out.write(image)
 
 for i in range(0,50):

@@ -6,7 +6,7 @@ foo@bar:~$ python main.py
 ### Output
 ```
 306
-38,63 - inverted xy
+38,63 
 ```
 
 visualisation for this day, used dick stra

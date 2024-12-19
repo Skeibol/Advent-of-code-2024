@@ -36,12 +36,13 @@ def drawField(obstacles,path,addedObs):
                 print(pr, end="")
         print()
 
-def saveField(file,field,path,frame,pathLength,addedAt,terminated = False):
-    if not terminated:
-        for p in path:
-            field[p] = 3
-    else:
+def saveField(file,field,path,frame,pathLength,addedAt,final):
+    if final:
         for p in path[0].keys():
+            field[p] = 3
+        
+    else:
+      for p in path:
             field[p] = 3
   
 
@@ -84,13 +85,13 @@ def privateDickstra(field, unvisited):
         
         for dir in directions:
             nextPos, success = getNextPosition(field,currentPos,dir)
-            if nextPos in visited:
+            if not success or nextPos in visited:
                 continue
-            if success:
-                tempDist = unvisited[currentPos] + 1
-                if tempDist < unvisited[nextPos]:
-                    unvisited[nextPos] = tempDist
-                    backtrackingPath[nextPos] = currentPos
+    
+            tempDist = unvisited[currentPos] + 1
+            if tempDist < unvisited[nextPos]:
+                unvisited[nextPos] = tempDist
+                backtrackingPath[nextPos] = currentPos
 
         unvisited.pop(currentPos)
         
@@ -128,23 +129,23 @@ for c in coords:
 for indec in zip(*np.where(field == 0)):
     unvisited[int(indec[0]),int(indec[1])] = float('inf')
 
-
+path = privateDickstra(field,unvisited.copy())
+shortestPath = privateDickstra(field,unvisited.copy())
 addedObs = []
 with open("./advent-of-code/day18/visual.txt", "w") as file:
-    for idx,obs in enumerate(extraCoords):
-        field[obs] = 2
-        del unvisited[obs]
-        #addedObs.append(obs)
-        path = privateDickstra(field,unvisited.copy())
-        if len(path) < 2:
-            saveField(file,field.copy(),path,idx,-1,obs,True)
-            print(f"No path at coordinate {obs}")
+    for idx,obstacle in enumerate(extraCoords):
+        field[obstacle] = 2
+        del unvisited[obstacle]
+        #addedObs.append(obstacle)
+        if len(path) < 2: # Saving things
+            #saveField(file,field.copy(),path,idx,-1,obstacle,True)
             break
-        saveField(file,field.copy(),path,idx,len(path),obs)
-            
-        # if idx % 200 == 0:
-        #     drawField(coords,path,addedObs)
-        #     print(f"Added # at {obs}")
-        print(idx)
+        if obstacle in path:
+            if obstacle == (63, 38):
+                break
+            path = privateDickstra(field,unvisited.copy())
+            saveField(file,field.copy(),path,idx,len(path),obstacle,False)
+        #print(idx)
 
-print(len(path))
+print(len(shortestPath))
+print(obstacle[::-1])
