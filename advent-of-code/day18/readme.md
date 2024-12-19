@@ -11,4 +11,4 @@ foo@bar:~$ python main.py
 
 visualisation for this day, used dick stra
 
-![jif](https://github.com/skeibol/Advent-of-code/advent-of-code/day18/visualisation.gif)
+![jif](https://github.com/Skeibol/Advent-of-code-2024/blob/main/advent-of-code/day18/visualisation.gif)
