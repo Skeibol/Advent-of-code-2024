@@ -36,13 +36,20 @@ def drawField(obstacles,path,addedObs):
                 print(pr, end="")
         print()
 
-def saveField(field):
-    with open("./advent-of-code/day18/visual.txt", "w") as file:
+def saveField(file,field,path,frame,pathLength,addedAt,terminated = False):
+    if not terminated:
+        for p in path:
+            field[p] = 3
+    else:
+        for p in path[0].keys():
+            field[p] = 3
+  
 
-        for row in field:
-            for el in row:
-                file.write(el)
-            file.write('\n')
+    for row in field:
+        for el in row:
+            file.write(str(el))
+        file.write('\n')
+    file.write(f'-.{frame}.{pathLength}.{addedAt}\n')
             
 
 def getNextPosition(field,pos,dir):
@@ -68,7 +75,7 @@ def privateDickstra(field, unvisited):
     while unvisited:
         currentPos = min(unvisited, key=unvisited.get)
         if currentPos != start and unvisited[currentPos] == float('inf'):
-            return []
+            return [visited]
         
         visited[currentPos] = unvisited[currentPos]
         
@@ -121,19 +128,23 @@ for c in coords:
 for indec in zip(*np.where(field == 0)):
     unvisited[int(indec[0]),int(indec[1])] = float('inf')
 
+
 addedObs = []
-for idx,obs in enumerate(extraCoords):
-    field[obs] = 2
-    del unvisited[obs]
-    addedObs.append(obs)
-    path = privateDickstra(field,unvisited.copy())
-    
-    if not path:
-        print(f"No path at coordinate {obs}")
-        break
-        
-    if idx % 200 == 0:
-        drawField(coords,path,addedObs)
-        print(f"Added # at {obs}")
+with open("./advent-of-code/day18/visual.txt", "w") as file:
+    for idx,obs in enumerate(extraCoords):
+        field[obs] = 2
+        del unvisited[obs]
+        #addedObs.append(obs)
+        path = privateDickstra(field,unvisited.copy())
+        if len(path) < 2:
+            saveField(file,field.copy(),path,idx,-1,obs,True)
+            print(f"No path at coordinate {obs}")
+            break
+        saveField(file,field.copy(),path,idx,len(path),obs)
+            
+        # if idx % 200 == 0:
+        #     drawField(coords,path,addedObs)
+        #     print(f"Added # at {obs}")
+        print(idx)
 
 print(len(path))

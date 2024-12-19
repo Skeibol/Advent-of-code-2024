@@ -8,3 +8,7 @@ foo@bar:~$ python main.py
 306
 38,63 - inverted xy
 ```
+
+visualisation for this day, used dick stra
+
+![jif](https://github.com/skeibol/Advent-of-code/advent-of-code/day18/visualisation.gif)
