@@ -16,6 +16,7 @@ def calculateSecretNumber(initialNum,sequenceValues):
     prev = initialNum %10
     visitedSequences = {}
     for i in range(0,2000):
+      
         
    
         initialNum = (initialNum << 6 ^ initialNum  )% 16777216
@@ -26,7 +27,7 @@ def calculateSecretNumber(initialNum,sequenceValues):
         change = value - prev
         sequence[-1] = change
         
-        if i>2:
+        if i>2 and value > 0:
             seqTuple = tuple(sequence)
             if seqTuple not in sequenceValues:
                 sequenceValues[seqTuple] = value
@@ -37,10 +38,9 @@ def calculateSecretNumber(initialNum,sequenceValues):
                     visitedSequences[seqTuple] = True
                 
                 
-        
         prev = value
         sequence = shift_left(sequence,1)
-    return 
+    return initialNum
 
 def sumList(ls):
     total = 0
