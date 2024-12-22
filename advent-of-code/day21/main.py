@@ -1,5 +1,15 @@
 from enum import Enum
 import numpy as np
+from collections import deque
+
+ROBOT_MOVE_MAP = {
+    "A": {"A": ["A"], "^": ["<A"], "<": ["v<<A"], ">": ["vA"], "v": ["v<A", "<vA"]},
+    "^": {"A": [">A"], "^": ["A"], "<": ["v<A"], ">": [">vA", "v>A"], "v": ["vA"]},
+    "<": {"A": [">>^A"], "^": [">^A"], "<": ["A"], ">": [">>A"], "v": [">A"]},
+    "v": {"A": [">^A", "^>A"], "^": ["^A"], "<": ["<A"], ">": [">A"], "v": ["A"]},
+    ">": {"A": ["^A"], "^": ["^<A", "<^A"], "<": ["<<A"], ">": ["A"], "v": ["<A"]},
+}
+
 
 NUMBERS = {
     7: (0, 0),
@@ -18,226 +28,90 @@ NUMBERS = {
 
 
 class Directions(Enum):
-    UP = (0, 1)
-    DOWN = (1, 1)
-    LEFT = (1, 0)
-    RIGHT = (1, 2)
-    CLICK = (0, 2)
-    EMPTY = (0, 0)
+    UP = "^"
+    DOWN = "v"
+    LEFT = "<"
+    RIGHT = ">"
+    CLICK = "A"
+    EMPTY = ""
+
+from functools import cache
+@cache
+def getNextSequence(sequence, maxDepth, depth=0):
+    if depth == maxDepth:  #'vA<<A>^A>AA>A'
+        final = 0
+        currentChr = "A"
+        for ch in sequence:
+            final += len(ROBOT_MOVE_MAP[currentChr][ch][0])
+            currentChr = ch
+
+        return final
+    currentChr = "A"
+    maxLen = 0
+
+    for nextChar in sequence:
+        seq = ROBOT_MOVE_MAP[currentChr][nextChar]
+        if len(seq) == 2:
+            maxLen += min(
+                getNextSequence(seq[0], maxDepth, depth + 1),
+                getNextSequence(seq[1], maxDepth, depth + 1),
+            )
+
+        else:
+            maxLen += getNextSequence(seq[0], maxDepth, depth + 1)
+
+        currentChr = nextChar
+
+    return maxLen
 
 
-class Numpad:
-    def __init__(self):
-        self.pos = NUMBERS[10]
+def getManhattanDistance(start_pos, end_pos):
+    if end_pos == "A":
+        end_pos = 10
+    if start_pos == "A":
+        start_pos = 10
+    start = NUMBERS[int(start_pos)]
+    end = NUMBERS[int(end_pos)]
+    # Calculate horizontal and vertical distances
+    dx = end[1] - start[1]
+    dy = end[0] - start[0]
 
-    def reset(self):
-        self.pos = NUMBERS[10]
+    # Generate primary path (horizontal first, then vertical)
+    path1 = (
+        (Directions.RIGHT.value * dx if dx > 0 else Directions.LEFT.value * abs(dx))
+        + (Directions.DOWN.value * dy if dy > 0 else Directions.UP.value * abs(dy))
+        + Directions.CLICK.value
+    )
 
-    def get_path(self, target):
-        if target not in NUMBERS:
-            return "Target number not found"
+    # Generate secondary path (vertical first, then horizontal)
+    path2 = (
+        (Directions.DOWN.value * dy if dy > 0 else Directions.UP.value * abs(dy))
+        + (Directions.RIGHT.value * dx if dx > 0 else Directions.LEFT.value * abs(dx))
+        + Directions.CLICK.value
+    )
 
-        path = []
+    if start[0] == 3 and end[1] == 0: # Handle paths going through forbidden square
+        return [path2]
+    if start[1] == 0 and end[0] == 3:
+        return [path1]
+    return [path1, path2]
 
-        if target == self.pos:
-            path.append(Directions.CLICK)
-            return path
-
-        y, x = self.pos
-        targetY, targetX = NUMBERS[target]
-        # Move horizontally
-        while x != targetX:
-            if x < targetX:
-                x += 1
-                path.append(Directions.RIGHT)
-
-            else:
-                if targetX == 0 and y == 3:
-                    while y != targetY:
-                        if y < targetY:
-
-                            y += 1
-                            path.append(Directions.DOWN)
-
-                        else:
-                            y -= 1
-                            path.append(Directions.UP)    
-                    continue
-                x -= 1
-                path.append(Directions.LEFT)
-
-        # Move vertically
-        while y != targetY:
-            if y < targetY:
-                if targetY == 3 and x == 0:
-                    while x != targetX:
-                        if x < targetX:
-                            x += 1
-                            path.append(Directions.RIGHT)
-                        else:
-                            x -= 1
-                            path.append(Directions.LEFT)
-                            
-                    continue
-                y += 1
-                path.append(Directions.DOWN)
-
-            else:
-                y -= 1
-                path.append(Directions.UP)
-        self.pos = (y, x)
-        path.append(Directions.CLICK)
-        return path
-
-    def calculateMoveForInput(self, inputString):
-        inp = []
-        for i in inputString:
-            if i == "A":
-                inp.extend(self.get_path(10))
-            else:
-                inp.extend(self.get_path(int(i)))
-        return inp
-
-
-class ArrowKeys:
-    def __init__(self, depth):
-        self.pos = [Directions.CLICK.value] * depth
-        self.depth = depth
-
-    def reset(self):
-        self.pos = [Directions.CLICK.value] * self.depth
-
-    def get_path(self, target, depth):
-        if target not in Directions:
-            return "Target direction not found"
-        target = target.value
-        path = []
-        if target == self.pos[depth]:
-            path.append(Directions.CLICK)
-            return path
-        y, x = self.pos[depth]
-        targetY, targetX = target
-        # Move horizontally
-        while x>targetX:
-            while (targetY,targetX) == (1,0) and y != targetY:
-                   
-                if y < targetY:
-
-                    y += 1
-                    path.append(Directions.DOWN)
-
-                else:
-                    y -= 1
-                    path.append(Directions.UP)
-                continue
-            x -= 1
-            path.append(Directions.LEFT)
-        
-        while y != targetY:
-            if y < targetY:
-
-                y += 1
-                path.append(Directions.DOWN)
-
-            else:
-                if (y,x) == (1,0):
-                    while x != targetX:
-                        if x < targetX:
-                            x += 1
-                            path.append(Directions.RIGHT)
-
-                        else:
-                            x -= 1
-                            path.append(Directions.LEFT)
-                    continue
-                y -= 1
-                path.append(Directions.UP)
-                
-        while x<targetX:
-            x+=1
-            path.append(Directions.RIGHT)
-        # Move vertically
-               
-
-        self.pos[depth] = (y, x)
-        path.append(Directions.CLICK)
-        return path
-
-    def calculateMoveForInput(self, inputs):
-        moves = []
-        inp = inputs
-        for layer in range(0, self.depth):
-            for i in inp:
-                moves.extend(self.get_path(i, layer))
-            inp = moves
-            moves = []
-
-        return inp
-
-
-
-
-def formatDirections(dir):
-    strang = ""
-    for d in dir:
-        if d == Directions.UP:
-            strang += "^"
-        elif d == Directions.DOWN:
-            strang += "v"
-        elif d == Directions.RIGHT:
-            strang += ">"
-        elif d == Directions.LEFT:
-            strang += "<"
-        elif d == Directions.CLICK:
-            strang += "A"
-    print(strang)
-
-
-
-
-def splitByA(listWithA):
-
-    split_value = Directions.CLICK
-
-    result = []
-    start = 0  # Initialize starting index for slicing
-
-    # Iterate through list to find
-    # indices of the split value
-    for i, value in enumerate(listWithA):
-        if value == split_value:
-        
-            # Add the sublist from start to the current index
-            result.append(listWithA[start:i])  
-            
-            # Update start to next index after the split value
-            start = i + 1  
-
-    # Add the last sublist if there are remaining elements
-    if start < len(listWithA):
-        result.append(listWithA[start:])
-    
-    return result
-
-strings = ["638A", "965A", "780A", "803A", "246A"]
-strings = ["029A", "980A", "179A", "456A", "379A"]
-inputs = {s: int("".join(filter(str.isdigit, s))) for s in strings}
+dirs = ["638A", "965A", "780A", "803A", "246A"]
 c = 0
-numpad = Numpad()
-arrowKeys = ArrowKeys(1)
-for numStr, value in inputs.items():
-    path = numpad.calculateMoveForInput('6')
-    
-    #print(splitByA(path))
-    numpad.reset()
-    formatDirections(path)
-    path = arrowKeys.calculateMoveForInput(path)
-    arrowKeys.reset()
-    #print(f"{numStr} : {len(path)} * {value}    ")
-    formatDirections(path)
-    c += len(path) * value
+MAX_DEP = 100
+total = 0
+for num in dirs:
+    c = 0
+    numValueInt = int(''.join([char for char in num if char.isdigit()]))
+    startDigit = "A"
+    for digit in num:
+        dists = getManhattanDistance(startDigit, digit)
+        if len(dists) == 2:
+            c += min(getNextSequence(dists[0], MAX_DEP), getNextSequence(dists[1], MAX_DEP))
+        else:
+            c += getNextSequence(dists[0], MAX_DEP)
 
-# v<<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>Av<<A>A>^AAAvA<^A>A
-# <v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A
+        startDigit = digit
+    total+= c*numValueInt
+print(total)
 
-print(c)
