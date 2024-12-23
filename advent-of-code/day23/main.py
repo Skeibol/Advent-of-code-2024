@@ -8,9 +8,10 @@ class Graph():
     def getBiggestCluster(self):
         maxlen = -1
         largest = None
+        maxVal =  max(self.connectionCounter, key=self.connectionCounter.get)
+        maxVal = self.connectionCounter[maxVal]
         for n in self.connections:
-            cluster = travelGraph(n,self,self.connectionCounter,maxlen)
-           
+            cluster = travelGraph(n,self,maxVal,maxlen)
             if len(cluster) > maxlen:
                 maxlen= len(cluster)
                 largest = cluster
@@ -24,13 +25,13 @@ def checkIsConnected(graph, startingNode, targetNodes):
             return False
     return True
 
-def travelGraph(startNode,graph,connectionCounter,maxcon,visited = None,connections = None):
+def travelGraph(startNode,graph,maxCons,currCons,visited = None,connections = None):
     if visited is None:
         connections = [startNode]
         visited = []
     
-       
-    if connectionCounter[startNode] <= maxcon:
+    
+    if maxCons <= currCons:
         return []
     
     if len(visited) > 1:
@@ -45,7 +46,7 @@ def travelGraph(startNode,graph,connectionCounter,maxcon,visited = None,connecti
         if nextNode in visited:
             continue
         
-        travelGraph(nextNode,graph,connectionCounter,maxcon,visited,connections)
+        travelGraph(nextNode,graph,maxCons,currCons,visited,connections)
     
     return connections
 
